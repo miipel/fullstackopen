@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import './App.css';
 
+import Button from './Button'
+import Statistics from './Statistics'
+
 class App extends Component {
   state = {
       good: 0,
@@ -9,9 +12,7 @@ class App extends Component {
   }
 
   handleGoodClick = () => {
-    this.setState((prevState) => ({
-      good: prevState.good + 1
-    }));    
+        
   }
 
   handleNeutralClick = () => {
@@ -26,18 +27,36 @@ class App extends Component {
     }));    
   }
 
+  handleClick = (clickIdentifier) => (event) =>{
+    switch(clickIdentifier) {
+      case 'good':
+        this.setState((prevState) => ({
+          good: prevState.good + 1
+        }));
+        break
+      case 'neutral':
+        this.setState((prevState) => ({
+          neutral: prevState.neutral + 1
+        }));
+        break
+      case 'bad':
+        this.setState((prevState) => ({
+          bad: prevState.bad + 1
+        }));
+        break
+      default:
+          break
+    } 
+  }
+
   render() {
     return (
       <div className="App">
         <h1>anna palautetta</h1>
-        <button onClick={this.handleGoodClick}>Hyvä</button>
-        <button onClick={this.handleNeutralClick}>Neutraali</button>
-        <button onClick={this.handleBadClick}>Huono</button>
-        <h1>statistiikka</h1>
-        <br />
-        <p>hyvä {this.state.good}</p>
-        <p>neutraali {this.state.neutral}</p>
-        <p>huono {this.state.bad}</p>
+        <Button handler={this.handleClick('good')} name='Hyvä' />
+        <Button handler={this.handleClick('neutral')} name='Neutraali' />
+        <Button handler={this.handleClick('bad')} name='Huono' />
+        <Statistics data={this.state} />      
       </div>
     );
   }
