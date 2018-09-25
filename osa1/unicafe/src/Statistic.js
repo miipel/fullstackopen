@@ -6,17 +6,42 @@ const Statistic = ( props ) => {
 
   switch(props.statType) {
     case 'average':
-      return <p>keskiarvo {average}</p>
+      return (
+        <React.Fragment>
+          <td>keskiarvo</td>
+          <td>{average}</td>
+        </React.Fragment>
+      )
     case 'percentage':
-      return <p>positiivisia {percentage}</p>
+      return (
+        <React.Fragment>
+          <td>positiivisia</td>
+          <td>{percentage}</td>
+        </React.Fragment>
+      ) 
     case 'good':
-      return <p>hyvä {props.data.good}</p>
+      return (
+        <React.Fragment>
+          <td>hyvä</td>
+          <td>{props.data.good}</td>
+        </React.Fragment>
+      ) 
     case 'neutral':
-      return <p>neutraali {props.data.neutral}</p>
+      return (
+        <React.Fragment>
+          <td>neutraali</td>
+          <td>{props.data.neutral}</td>
+        </React.Fragment>
+      ) 
     case 'bad':
-      return <p>huono {props.data.bad}</p>
+      return (
+        <React.Fragment>
+          <td>huono</td>
+          <td>{props.data.bad}</td>
+        </React.Fragment>
+      ) 
     default:
-      return <p>No statistics</p>
+      return <td>No statistics</td>
   }
 
 }

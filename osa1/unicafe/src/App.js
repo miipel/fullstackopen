@@ -51,7 +51,7 @@ class App extends Component {
 
   render() {
     return (
-      <div className="App">
+      <div>
         <h1>anna palautetta</h1>
         <Button handler={this.handleClick('good')} name='Hyvä' />
         <Button handler={this.handleClick('neutral')} name='Neutraali' />
