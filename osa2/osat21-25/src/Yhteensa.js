@@ -9,7 +9,7 @@ const Yhteensa = ( props ) => {
     )
 
     return (
-        <p>Yhteensä {count} tehtävää</p>
+        <ul>Yhteensä {count} tehtävää</ul>
     )   
 }
 
