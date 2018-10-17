@@ -1,77 +1,75 @@
-import React from 'react'
-import axios from 'axios'
+import React from 'react';
 
-import Filter from './Filter'
-import Form from './Form'
+import Filter from './Filter';
+import Form from './Form';
+import numberService from './services/numbers';
 
 class App extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
-      persons: [
-        // { name: 'Arto Hellas', number: '040-123456' },
-        // { name: 'Martti Tienari', number: '040-123456' },
-        // { name: 'Arto Järvinen', number: '040-123456' },
-        // { name: 'Lea Kutvonen', number: '040-123456' }
-      ],
+      persons: [],
       newName: '',
       newNumber: '',
       filter: ''
-    }
+    };
   }
 
   componentDidMount() {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        this.setState({ persons: response.data })
-      })
-    }
-
-  nameChangedHandler = (event) => {
-    this.setState({ newName: event.target.value })
+    numberService.getAll().then(response => {
+      this.setState({ persons: response.data });
+    });
   }
 
-  numberChangedHandler = (event) => {
-    this.setState({ newNumber: event.target.value })
-  }
+  nameChangedHandler = event => {
+    this.setState({ newName: event.target.value });
+  };
 
-  filterChangedHandler = (event) => {
-    this.setState({ filter: event.target.value })
-  }
+  numberChangedHandler = event => {
+    this.setState({ newNumber: event.target.value });
+  };
 
-  addPerson = (event) => {
-    event.preventDefault()
-    if(this.state.persons.find(person => person.name === this.state.newName)) {
-      alert('This name has already been added')
-      return
+  filterChangedHandler = event => {
+    this.setState({ filter: event.target.value });
+  };
+
+  addPerson = event => {
+    event.preventDefault();
+    if (this.state.persons.find(person => person.name === this.state.newName)) {
+      alert('This name has already been added');
+      return;
     } else {
-      const newPerson = { name: this.state.newName, number: this.state.newNumber }
-      const newPersons = this.state.persons.concat(newPerson)
+      const newPerson = {
+        name: this.state.newName,
+        number: this.state.newNumber
+      };
+      const newPersons = this.state.persons.concat(newPerson);
       this.setState({
         persons: newPersons,
         newName: '',
         newNumber: ''
-      })
-      axios
-        .post('http://localhost:3001/persons', newPerson)
+      });
+      numberService.create(newPerson)
     }
-  }
+  };
 
   render() {
-    const nameList = this.state.filter === '' ?
-      this.state.persons :
-      this.state.persons.filter(person => person.name.toLowerCase().match(this.state.filter.toLowerCase()))
+    const nameList =
+      this.state.filter === ''
+        ? this.state.persons
+        : this.state.persons.filter(person =>
+            person.name.toLowerCase().match(this.state.filter.toLowerCase())
+          );
 
     return (
       <div>
         <h2>Puhelinluettelo</h2>
-        <Filter 
-          filterWord={this.state.filter} 
-          changeHandler={this.filterChangedHandler} 
+        <Filter
+          filterWord={this.state.filter}
+          changeHandler={this.filterChangedHandler}
         />
-        <Form 
-          addNew={this.addPerson} 
+        <Form
+          addNew={this.addPerson}
           name={this.state.newName}
           nameChanged={this.nameChangedHandler}
           number={this.state.newNumber}
@@ -80,11 +78,12 @@ class App extends React.Component {
         <h3>Numerot</h3>
         <table>
           <tbody>
-            {nameList.map(person =>
+            {nameList.map(person => (
               <tr key={person.name}>
                 <td>{person.name}</td>
                 <td>{person.number}</td>
-              </tr>)}
+              </tr>
+            ))}
           </tbody>
         </table>
         <table>
@@ -97,8 +96,8 @@ class App extends React.Component {
           </tbody>
         </table>
       </div>
-    )
+    );
   }
 }
 
-export default App
+export default App;
