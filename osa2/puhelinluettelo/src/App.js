@@ -53,6 +53,8 @@ class App extends React.Component {
         newName: '',
         newNumber: ''
       })
+      axios
+        .post('http://localhost:3001/persons', newPerson)
     }
   }
 
