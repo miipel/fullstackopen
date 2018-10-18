@@ -21,12 +21,24 @@ class App extends React.Component {
     });
   }
 
+  componentDidUpdate () {
+    numberService.getAll().then(response => {
+      this.setState({ persons: response.data });
+    });
+  }
+
   nameChangedHandler = event => {
     this.setState({ newName: event.target.value });
   };
 
   numberChangedHandler = event => {
     this.setState({ newNumber: event.target.value });
+  };
+
+  numberRemovedHandler = (id, name) => {
+    const confirmRemoval = window.confirm('poistetaanko ' + name);
+    console.log(confirmRemoval);
+    numberService.remove(id);
   };
 
   filterChangedHandler = event => {
@@ -49,7 +61,7 @@ class App extends React.Component {
         newName: '',
         newNumber: ''
       });
-      numberService.create(newPerson)
+      numberService.create(newPerson);
     }
   };
 
@@ -82,6 +94,15 @@ class App extends React.Component {
               <tr key={person.name}>
                 <td>{person.name}</td>
                 <td>{person.number}</td>
+                <td>
+                  <button
+                    onClick={() =>
+                      this.numberRemovedHandler(person.id, person.name)
+                    }
+                  >
+                    poista
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>

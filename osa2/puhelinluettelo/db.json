@@ -1,11 +1,6 @@
 {
   "persons": [
     {
-      "name": "Arto Hellas",
-      "number": "040-123456",
-      "id": 1
-    },
-    {
       "name": "Martti Tienari",
       "number": "040-123456",
       "id": 2
@@ -29,6 +24,11 @@
       "name": "Jarkko Hollilla",
       "number": "133713371337",
       "id": 6
+    },
+    {
+      "name": "Kua Letvonen",
+      "number": "050444333",
+      "id": 8
     }
   ]
 }
