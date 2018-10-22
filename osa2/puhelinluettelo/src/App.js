@@ -2,7 +2,7 @@ import React from 'react';
 
 import Filter from './Filter';
 import Form from './Form';
-import Notification from './Notification'
+import Notification from './Notification';
 import numberService from './services/numbers';
 
 class App extends React.Component {
@@ -21,7 +21,6 @@ class App extends React.Component {
     numberService.getAll().then(response => {
       this.setState({ persons: response });
     });
-
   }
 
   nameChangedHandler = event => {
@@ -36,15 +35,15 @@ class App extends React.Component {
     const confirmRemoval = window.confirm('poistetaanko ' + person.name);
     confirmRemoval === true
       ? numberService.remove(person.id).then(res => {
-        let tmp = this.state.persons
-        const index = tmp.indexOf(person);
-        tmp.splice(index, 1)
-        this.setState({persons: tmp})
-        this.setState({ message: 'numero poistettu onnistuneesti' })
-        setTimeout(() => {
-          this.setState({message: null})
-        }, 2000)
-      })
+          let tmp = this.state.persons;
+          const index = tmp.indexOf(person);
+          tmp.splice(index, 1);
+          this.setState({ persons: tmp });
+          this.setState({ message: 'numero poistettu onnistuneesti' });
+          setTimeout(() => {
+            this.setState({ message: null });
+          }, 2000);
+        })
       : console.log('No removal');
   };
 
@@ -52,7 +51,26 @@ class App extends React.Component {
     this.setState({ filter: event.target.value });
   };
 
-
+  createNewPerson = message => {
+    const newPerson = {
+      name: this.state.newName,
+      number: this.state.newNumber
+    };
+    numberService.create(newPerson).then(newPerson => {
+      const newPersons = this.state.persons.concat(newPerson);
+      this.setState({
+        persons: newPersons,
+        newName: '',
+        newNumber: ''
+      });
+      this.setState({
+        message: message
+      });
+      setTimeout(() => {
+        this.setState({ message: null });
+      }, 2000);
+    });
+  };
 
   addPerson = event => {
     event.preventDefault();
@@ -70,35 +88,30 @@ class App extends React.Component {
         id: newPerson.id
       };
       confirmUpdate === true
-        ? numberService.update(modified.id, modified).then(response => {
-            let tmp = this.state.persons
-            const index = tmp.indexOf(newPerson);
-            tmp.splice(index, 1)
-            tmp = tmp.concat(response)
-            this.setState({ persons: tmp });
-            this.setState({ message: 'numero muutettu onnistuneesti' })
-            setTimeout(() => {
-              this.setState({message: null})
-            }, 2000)
-          })
+        ? numberService
+            .update(modified.id, modified)
+            .then(response => {
+              let tmp = this.state.persons;
+              const index = tmp.indexOf(newPerson);
+              tmp.splice(index, 1);
+              tmp = tmp.concat(response);
+              this.setState({ persons: tmp });
+              this.setState({ message: 'numero muutettu onnistuneesti' });
+              setTimeout(() => {
+                this.setState({ message: null });
+              }, 2000);
+            })
+            .catch(error => {
+              this.createNewPerson(
+                'Virhe lisättäessä, henkilöä ei löytynyt. Lisättiin uusi henkilö.'
+              )
+              const updated = this.state.notes.filter(person => person.id !== modified.id)
+              console.log(updated)
+              this.setState({persons: updated})
+            })
         : console.log(newPerson);
     } else {
-      const newPerson = {
-        name: this.state.newName,
-        number: this.state.newNumber
-      };
-      numberService.create(newPerson).then(newPerson => {
-        const newPersons = this.state.persons.concat(newPerson);
-        this.setState({
-          persons: newPersons,
-          newName: '',
-          newNumber: ''
-        });
-        this.setState({ message: 'numero lisätty onnistuneesti' })
-        setTimeout(() => {
-          this.setState({message: null})
-        }, 2000)
-      });
+      this.createNewPerson('numero lisätty onnistuneesti')
     }
   };
 
