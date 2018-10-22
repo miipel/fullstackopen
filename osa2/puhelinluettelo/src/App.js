@@ -17,14 +17,9 @@ class App extends React.Component {
 
   componentDidMount() {
     numberService.getAll().then(response => {
-      this.setState({ persons: response.data });
+      this.setState({ persons: response });
     });
-  }
 
-  componentDidUpdate () {
-    numberService.getAll().then(response => {
-      this.setState({ persons: response.data });
-    });
   }
 
   nameChangedHandler = event => {
@@ -35,10 +30,11 @@ class App extends React.Component {
     this.setState({ newNumber: event.target.value });
   };
 
-  numberRemovedHandler = (id, name) => {
-    const confirmRemoval = window.confirm('poistetaanko ' + name);
-    console.log(confirmRemoval);
-    numberService.remove(id);
+  personRemovedHandler = person => {
+    const confirmRemoval = window.confirm('poistetaanko ' + person.name);
+    confirmRemoval === true
+      ? numberService.remove(person.id)
+      : console.log('No removal');
   };
 
   filterChangedHandler = event => {
@@ -47,21 +43,41 @@ class App extends React.Component {
 
   addPerson = event => {
     event.preventDefault();
-    if (this.state.persons.find(person => person.name === this.state.newName)) {
-      alert('This name has already been added');
-      return;
+    const newPerson = this.state.persons.find(
+      person => person.name === this.state.newName
+    );
+    if (newPerson) {
+      const confirmUpdate = window.confirm(
+        this.state.newName +
+          ' on jo luettelossa, korvataanko vanha numero uudella?'
+      );
+      const modified = {
+        name: newPerson.name,
+        number: this.state.newNumber,
+        id: newPerson.id
+      };
+      confirmUpdate === true
+        ? numberService.update(modified.id, modified).then(response => {
+            let tmp = this.state.persons
+            const index = tmp.indexOf(newPerson);
+            tmp.splice(index, 1)
+            tmp = tmp.concat(response)
+            this.setState({ persons: tmp });
+          })
+        : console.log(newPerson);
     } else {
       const newPerson = {
         name: this.state.newName,
         number: this.state.newNumber
       };
-      const newPersons = this.state.persons.concat(newPerson);
-      this.setState({
-        persons: newPersons,
-        newName: '',
-        newNumber: ''
+      numberService.create(newPerson).then(newPerson => {
+        const newPersons = this.state.persons.concat(newPerson);
+        this.setState({
+          persons: newPersons,
+          newName: '',
+          newNumber: ''
+        });
       });
-      numberService.create(newPerson);
     }
   };
 
@@ -95,11 +111,7 @@ class App extends React.Component {
                 <td>{person.name}</td>
                 <td>{person.number}</td>
                 <td>
-                  <button
-                    onClick={() =>
-                      this.numberRemovedHandler(person.id, person.name)
-                    }
-                  >
+                  <button onClick={() => this.personRemovedHandler(person)}>
                     poista
                   </button>
                 </td>
