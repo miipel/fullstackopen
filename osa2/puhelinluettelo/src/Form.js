@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Form = (props) => {
+const form = (props) => {
   return (
     <div>
       <h3>Lisää uusi</h3>
@@ -29,4 +29,4 @@ const Form = (props) => {
   )
 }
 
-export default Form
+export default form

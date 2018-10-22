@@ -2,6 +2,7 @@ import React from 'react';
 
 import Filter from './Filter';
 import Form from './Form';
+import Notification from './Notification'
 import numberService from './services/numbers';
 
 class App extends React.Component {
@@ -11,7 +12,8 @@ class App extends React.Component {
       persons: [],
       newName: '',
       newNumber: '',
-      filter: ''
+      filter: '',
+      message: null
     };
   }
 
@@ -33,13 +35,24 @@ class App extends React.Component {
   personRemovedHandler = person => {
     const confirmRemoval = window.confirm('poistetaanko ' + person.name);
     confirmRemoval === true
-      ? numberService.remove(person.id)
+      ? numberService.remove(person.id).then(res => {
+        let tmp = this.state.persons
+        const index = tmp.indexOf(person);
+        tmp.splice(index, 1)
+        this.setState({persons: tmp})
+        this.setState({ message: 'numero poistettu onnistuneesti' })
+        setTimeout(() => {
+          this.setState({message: null})
+        }, 2000)
+      })
       : console.log('No removal');
   };
 
   filterChangedHandler = event => {
     this.setState({ filter: event.target.value });
   };
+
+
 
   addPerson = event => {
     event.preventDefault();
@@ -63,6 +76,10 @@ class App extends React.Component {
             tmp.splice(index, 1)
             tmp = tmp.concat(response)
             this.setState({ persons: tmp });
+            this.setState({ message: 'numero muutettu onnistuneesti' })
+            setTimeout(() => {
+              this.setState({message: null})
+            }, 2000)
           })
         : console.log(newPerson);
     } else {
@@ -77,6 +94,10 @@ class App extends React.Component {
           newName: '',
           newNumber: ''
         });
+        this.setState({ message: 'numero lisätty onnistuneesti' })
+        setTimeout(() => {
+          this.setState({message: null})
+        }, 2000)
       });
     }
   };
@@ -92,6 +113,7 @@ class App extends React.Component {
     return (
       <div>
         <h2>Puhelinluettelo</h2>
+        <Notification message={this.state.message} />
         <Filter
           filterWord={this.state.filter}
           changeHandler={this.filterChangedHandler}
@@ -117,15 +139,6 @@ class App extends React.Component {
                 </td>
               </tr>
             ))}
-          </tbody>
-        </table>
-        <table>
-          <tbody>
-            <tr>
-              <td>Debug: </td>
-              <td>{this.state.newName}</td>
-              <td>{this.state.newNumber}</td>
-            </tr>
           </tbody>
         </table>
       </div>
